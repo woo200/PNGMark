@@ -17,6 +17,8 @@ def main():
     parser.add_argument("-i", "--input", help="Input file, only used when --setbp is used", type=str, default=None)
     parser.add_argument("-p", "--setbp", help="Set a bitplane, 0-7 valid values", type=int, default=None)
 
+    parser.add_argument("-d", "--debug", help="Enable debug mode", action="store_true")
+
     args = parser.parse_args()
 
     if not os.path.exists(args.image):
@@ -27,6 +29,8 @@ def main():
     try:
         image = cv2.imread(args.image)
     except cv2.error:
+        if args.debug:
+            traceback.print_exc()
         print("FATAL: Error reading image")
         return
 
@@ -35,6 +39,8 @@ def main():
         try:
             planes_to_extract = list(set([int(p) for p in args.bitplane.split(",")]))
         except ValueError:
+            if args.debug:
+                traceback.print_exc()
             print("FATAL: Bitplanes must be integers (0-7)")
             return
         
@@ -61,6 +67,8 @@ def main():
             with open(args.store, "rb") as f:
                 data = f.read()
         except IOError:
+            if args.debug:
+                traceback.print_exc()
             print("FATAL: Error reading file to store")
             return
         print("Storing file...")
@@ -68,12 +76,16 @@ def main():
         try:
             image = manipulator.write_sequence(data, image)
         except Exception as e:
+            if args.debug:
+                traceback.print_exc()
             print(f"FATAL: {e}")
             return
         print("Writing image...")
         try:
             cv2.imwrite(args.output, image)
         except cv2.error:
+            if args.debug:
+                traceback.print_exc()
             print("FATAL: Error writing image")
             return
         print(f"Successfully stored file in {args.output}")
@@ -85,6 +97,8 @@ def main():
         try:
             data = manipulator.read_sequence(image)
         except Exception as e:
+            if args.debug:
+                traceback.print_exc()
             print(f"FATAL: {e}")
             return
         print("Writing data...")
@@ -92,6 +106,8 @@ def main():
             with open(args.output, "wb") as f:
                 f.write(data)
         except IOError:
+            if args.debug:
+                traceback.print_exc()
             print("FATAL: Error writing data")
             return
         print(f"Successfully retrieved data to {args.output}")
@@ -109,19 +125,24 @@ def main():
         try:
             new_plane = cv2.imread(args.input)
         except IOError:
+            if args.debug:
+                traceback.print_exc()
             print("FATAL: Error reading input file")
             return
         print("Setting bitplane...")
         try:
             image = forensictools.BitPlanes.set_bitplane(image, new_plane, args.setbp)
         except Exception as e:
-            print(traceback.format_exc())
+            if args.debug:
+                traceback.print_exc()
             print(f"FATAL: {e}")
             return
         print("Writing image...")
         try:
             cv2.imwrite(args.output, image)
         except cv2.error:
+            if args.debug:
+                traceback.print_exc()
             print("FATAL: Error writing image")
             return
         print(f"Successfully set bitplane {args.setbp} in {args.output}")
