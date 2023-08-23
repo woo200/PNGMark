@@ -27,12 +27,17 @@ def main():
     
     print("Loading image...")
     try:
-        image = cv2.imread(args.image)
+        image = cv2.imread(args.image, cv2.IMREAD_UNCHANGED)
     except cv2.error:
         if args.debug:
             traceback.print_exc()
         print("FATAL: Error reading image")
         return
+
+    if args.debug:
+        print(f"Image shape: {image.shape}")
+        print(f"Image size: {image.size}")
+        print(f"Image dtype: {image.dtype}")
 
     if args.bitplane is not None:
         # Parse bitplane string
@@ -123,7 +128,7 @@ def main():
             return
         print("Loading input file...")
         try:
-            new_plane = cv2.imread(args.input)
+            new_plane = cv2.imread(args.input, cv2.IMREAD_UNCHANGED)
         except IOError:
             if args.debug:
                 traceback.print_exc()
