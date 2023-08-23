@@ -18,6 +18,9 @@ class BitManipulator:
     def set_bit(self, n: int, bit_idx: int) -> int:
         return n | (1 << bit_idx)
     
+    def clear_bit(self, n: int, bit_idx: int) -> int:
+        return n & ~(1 << bit_idx)
+    
     def write_sequence(self, data: bytes, n: np.array, st_idx = 0) -> np.array:
         if len(data) * 8 > len(n):
             raise Exception(f"Not enough space ({len(data) * 8} bits required > {len(n)} bits available)")

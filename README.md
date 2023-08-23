@@ -68,6 +68,31 @@ python pngmark.py <IMAGE_PATH> -r -o <DATA_OUTPUT_PATH>
 
 - `<DATA_OUTPUT_PATH>`: The path where the retrieved data will be saved.
 
+### 4. Modifying Bitplanes
+To modify a specific bitplane of an image with data from another image:
+
+```bash
+python pngmark.py <IMAGE_PATH> -i <INPUT_IMAGE_PATH> -p <BITPLANE> -o <OUTPUT_PATH>
+```
+
+- `<IMAGE_PATH>`: Path to the image you want to work on.
+- `<INPUT_IMAGE_PATH>`: Path to the image containing the bitplane data you want to use.
+- `<BITPLANE>`: The bitplane you want to modify (valid values: 0-7).
+- `<OUTPUT_PATH>`: Path for the output image.
+
+#### Example:
+To replace the 1st bitplane of 'target.png' with the corresponding bitplane from 'source.png':
+
+```bash
+python pngmark.py target.png -i source.png -p 1 -o modified_target.png
+```
+
+**Notes:**
+- Ensure the image and input file paths provided are correct.
+- Make sure you have the required permissions to read from or write to the specified paths.
+- The bitplane to be set should be a valid integer between 0-7.
+- The input image should be of the same dimension as the target image for correct bitplane replacement.
+  
 ## Library Usage:
 
 ### Initialization:

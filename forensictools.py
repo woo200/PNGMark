@@ -82,6 +82,9 @@ class ForensicMark:
 
 class BitPlanes:
     PLANE_LSB = 0
+
+    def __closest(num, arr=[0, 255]):
+        return min(arr, key=lambda x: abs(x - num))
     
     def get_bitplane(image: np.array, plane=PLANE_LSB):
         manipulator = bitman.BitManipulator()
@@ -91,4 +94,14 @@ class BitPlanes:
             blank_image[i] = 255 if manipulator.check_bit(px, plane) else 0
         
         return blank_image.reshape(image.shape)
-        
+    
+    def set_bitplane(image: np.array, new_plane: np.array, plane: int):
+        manipulator = bitman.BitManipulator()
+
+        normalized_bp = [BitPlanes.__closest(v) for v in new_plane.flatten()]
+        new_image_flattened = image.flatten()
+
+        for i, px in enumerate(new_image_flattened):
+            new_image_flattened[i] = manipulator.set_bit(px, plane) if normalized_bp[i] == 255 else manipulator.clear_bit(px, plane)
+
+        return new_image_flattened.reshape(image.shape)

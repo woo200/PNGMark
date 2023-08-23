@@ -1,6 +1,7 @@
 import argparse
 import bitman
 import forensictools
+import traceback
 import cv2
 import os
 
@@ -12,6 +13,9 @@ def main():
     parser.add_argument("-b", "--bitplane", help="Bitplanes to extract, comma separated", type=str, default=None)
     parser.add_argument("-s", "--store", help="Path to file to store in image, ignored if not set", type=str, default=None)
     parser.add_argument("-r", "--retrieve", help="Should you extract data from the image", action="store_true")
+
+    parser.add_argument("-i", "--input", help="Input file, only used when --setbp is used", type=str, default=None)
+    parser.add_argument("-p", "--setbp", help="Set a bitplane, 0-7 valid values", type=int, default=None)
 
     args = parser.parse_args()
 
@@ -91,8 +95,37 @@ def main():
             print("FATAL: Error writing data")
             return
         print(f"Successfully retrieved data to {args.output}")
-        
+
         return
+
+    if args.setbp is not None:
+        if args.input is None:
+            print("FATAL: Input file not specified")
+            return
+        if not os.path.exists(args.input):
+            print("FATAL: Input file not found")
+            return
+        print("Loading input file...")
+        try:
+            new_plane = cv2.imread(args.input)
+        except IOError:
+            print("FATAL: Error reading input file")
+            return
+        print("Setting bitplane...")
+        try:
+            image = forensictools.BitPlanes.set_bitplane(image, new_plane, args.setbp)
+        except Exception as e:
+            print(traceback.format_exc())
+            print(f"FATAL: {e}")
+            return
+        print("Writing image...")
+        try:
+            cv2.imwrite(args.output, image)
+        except cv2.error:
+            print("FATAL: Error writing image")
+            return
+        print(f"Successfully set bitplane {args.setbp} in {args.output}")
+        
     
 if __name__ == "__main__":
     main()
