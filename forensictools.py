@@ -1,5 +1,8 @@
 import struct
+import bitman
 import io
+
+import numpy as np
 
 F_MARK = b'\x9b\xbc3\x9a\xff\xe7h>\xafa+\x00\xe1\xa3\xa7\xdd'
 
@@ -61,18 +64,31 @@ class ForensicMark:
         mark = io.BytesIO(mark)
 
         author_len, = struct.unpack("<B", mark.read(1))
-        author = mark.read(author_len).decode()
+        author = mark.read(author_len).decode(errors="ignore")
 
         contact_email_len, = struct.unpack("<B", mark.read(1))
-        contact_email = mark.read(contact_email_len).decode()
+        contact_email = mark.read(contact_email_len).decode(errors="ignore")
 
         license_len, = struct.unpack("<B", mark.read(1))
-        license = mark.read(license_len).decode()
+        license = mark.read(license_len).decode(errors="ignore")
 
         notice_len, = struct.unpack("<B", mark.read(1))
-        notice = mark.read(notice_len).decode()
+        notice = mark.read(notice_len).decode(errors="ignore")
 
         return ForensicMark(author, contact_email, license, notice)
 
     def __repr__(self):
         return f"ForensicMark(copyright_holder={self._author}, contact_email={self._contact_email}, license={self._license}, notice={self._copyright})"
+
+class BitPlanes:
+    PLANE_LSB = 0
+    
+    def get_bitplane(image: np.array, plane=PLANE_LSB):
+        manipulator = bitman.BitManipulator()
+        blank_image = np.zeros(image.size, dtype=np.uint8)
+
+        for i, px in enumerate(image.flatten()):
+            blank_image[i] = 255 if manipulator.check_bit(px, plane) else 0
+        
+        return blank_image.reshape(image.shape)
+        

@@ -1,6 +1,6 @@
 # PNGMark
 
-This is a simple python library for planting/extracting/detecting data in the LSB plane of a png image
+This is a simple python library for planting/extracting/detecting data in the LSB plane of a png image, which includes an easy-to-use standalone tool which incorporates most of this libraries functions.
 
 `NDArraySequenceManipulator` is a Python class for handling sequences of data (in bytes format) written into and read from NumPy arrays. The class operates in a bit-level granularity, and has support for including or excluding headers, allowing for flexible usage.
 
@@ -14,7 +14,61 @@ Ensure that you have `numpy` installed:
 pip install numpy
 ```
 
-## Usage:
+# pngmark.py
+
+pngmark.py is a standalone tool used to extract and embed data into the LSB of a png image. 
+
+## Features
+- Extract specific bitplanes from an image for analysis.
+- Store data within an image.
+- Retrieve data from an image.
+
+## Requirements
+- Python 3.x
+- OpenCV (`cv2` module)
+- numpy
+
+## Installation
+Ensure you have Python 3.x and required modules installed.
+
+You can typically install the needed libraries via pip:
+
+```bash
+pip install opencv-python numpy
+```
+
+## Usage
+
+### 1. Extract Bitplanes
+To extract specific bitplanes from an image:
+
+```bash
+python pngmark.py <IMAGE_PATH> -b <BITPLANES> -o <OUTPUT_PATH>
+```
+
+- `<IMAGE_PATH>`: Path to the image you want to work on.
+- `<BITPLANES>`: Comma-separated integers representing the bitplanes to extract (0-7). For example, `0,1,2`.
+- `<OUTPUT_PATH>`: Optional path for the output image. If not specified, defaults to `output.png`.
+
+### 2. Store Data in Image
+To store a file's data within an image:
+
+```bash
+python pngmark.py <IMAGE_PATH> -s <DATA_FILE_PATH> -o <OUTPUT_PATH>
+```
+
+- `<DATA_FILE_PATH>`: Path to the file you want to store in the image.
+
+### 3. Retrieve Data from Image
+To retrieve data stored within an image:
+
+```bash
+python pngmark.py <IMAGE_PATH> -r -o <DATA_OUTPUT_PATH>
+```
+
+- `<DATA_OUTPUT_PATH>`: The path where the retrieved data will be saved.
+
+## Library Usage:
 
 ### Initialization:
 
